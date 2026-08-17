@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
-    
+
     /**
      * Maneja solicitudes a rutas o recursos estáticos inexistentes en el servidor (HTTP 404 Not Found).
      */
