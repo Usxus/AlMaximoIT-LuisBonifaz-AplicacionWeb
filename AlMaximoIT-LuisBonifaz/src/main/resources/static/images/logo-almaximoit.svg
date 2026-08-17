@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00D2D3" />
+      <stop offset="50%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#1E40AF" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#FFFFFF" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0284C7" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Background Hexagon Badge -->
+  <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" fill="url(#brandGrad)" filter="url(#glow)" />
+  
+  <!-- Inner Dynamic Tech Chevron / Speed Peak (Representing 'Al Máximo') -->
+  <!-- Stylized Letter 'A' + 'M' Peak with Circuit nodes -->
+  <path d="M50,20 L75,68 L60,68 L50,45 L40,68 L25,68 Z" fill="#FFFFFF" opacity="0.95" />
+  <path d="M50,28 L68,64 L56,64 L50,50 L44,64 L32,64 Z" fill="url(#brandGrad)" />
+  
+  <!-- Glowing Center Dynamic Core / Pulse Node -->
+  <circle cx="50" cy="38" r="5" fill="#00D2D3" />
+  <circle cx="50" cy="38" r="2.5" fill="#FFFFFF" />
+  
+  <!-- Tech Circuit Accents -->
+  <line x1="50" y1="5" x2="50" y2="18" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="28" y1="70" x2="18" y2="76" stroke="#00D2D3" stroke-width="2" stroke-linecap="round" />
+  <line x1="72" y1="70" x2="82" y2="76" stroke="#00D2D3" stroke-width="2" stroke-linecap="round" />
+</svg>

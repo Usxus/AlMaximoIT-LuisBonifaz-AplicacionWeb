@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlMáximo IT | Sistema de Catálogo de Productos</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/productos}">
+                <img th:src="@{/images/logo-almaximoit.svg}" alt="Logo AlMáximo IT" width="32" height="32" class="me-1" />
+                <span class="navbar-brand-custom">AlMáximo IT Luis Bonifaz</span>
+                <span class="brand-badge ms-2">Sistema de Catálogo de Productos</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="container">
+
+            <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 d-flex align-items-center justify-content-between p-3 mb-4 rounded-3" role="alert" id="alertaFlashMensaje" style="border-left: 5px solid #10b981 !important; background-color: #ecfdf5; color: #065f46;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2 fs-5 text-success"></i>
+                    <span th:text="${mensaje}" class="fw-semibold"></span>
+                </div>
+                <button type="button" class="btn-close" onclick="cerrarAlerta(this)" aria-label="Cerrar"></button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm border-0 d-flex align-items-center justify-content-between p-3 mb-4 rounded-3" role="alert" id="alertaFlashError" style="border-left: 5px solid #ef4444 !important; background-color: #fef2f2; color: #991b1b;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-5 text-danger"></i>
+                    <span th:text="${error}" class="fw-semibold"></span>
+                </div>
+                <button type="button" class="btn-close" onclick="cerrarAlerta(this)" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="custom-card mb-4">
+                <div class="card-header-gradient d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-search me-2"></i> Criterios de Búsqueda de Productos</h5>
+                    <a th:href="@{/productos/nuevo}" class="btn btn-sm btn-light font-weight-bold text-primary shadow-sm">
+                        <i class="bi bi-plus-lg me-1"></i> Nuevo Producto
+                    </a>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/productos}" method="get" class="row g-3" autocomplete="off">
+                        <div class="col-md-5">
+                            <label for="clave" class="form-label font-weight-semibold text-secondary">Clave o Nombre de Producto</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-barcode"></i></span>
+                                <input type="text" class="form-control" id="clave" name="clave" 
+                                       th:value="${claveParam}" placeholder="Ej. PROD-001 o Smart TV..." autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="idTipoProducto" class="form-label font-weight-semibold text-secondary">Tipo de Producto</label>
+                            <select class="form-select" id="idTipoProducto" name="idTipoProducto">
+                                <option value="0">-- Todos los Tipos --</option>
+                                <option th:each="tipo : ${tiposProducto}" 
+                                        th:value="${tipo.idTipoProducto}" 
+                                        th:text="${tipo.nombre}"
+                                        th:selected="${tipo.idTipoProducto == idTipoProductoParam}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 d-flex align-items-end gap-2">
+                            <button type="submit" class="btn btn-primary-custom flex-grow-1">
+                                <i class="bi bi-funnel-fill me-1"></i> Filtrar
+                            </button>
+                            <a th:href="@{/productos}" class="btn btn-outline-custom" title="Limpiar Filtros">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="custom-card">
+                <div class="card-header-list">
+                    <h6 class="mb-0"><i class="bi bi-table me-2 text-primary"></i> Catálogo de Productos Registrados</h6>
+                    <span class="badge-registros" th:text="${productos.size()} + ' Registros Encontrados'">0 Registros</span>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-custom table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%;">Clave</th>
+                                    <th style="width: 30%;">Nombre del Producto</th>
+                                    <th style="width: 20%;">Tipo</th>
+                                    <th style="width: 15%;">Precio de Venta</th>
+                                    <th style="width: 10%;" class="text-center">Proveedores</th>
+                                    <th style="width: 10%;" class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(productos)}">
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                                        No se encontraron productos registrados con los criterios seleccionados.
+                                    </td>
+                                </tr>
+                                <tr th:each="p : ${productos}">
+                                    <td>
+                                        <span class="badge-clave" th:text="${p.clave}">PROD-001</span>
+                                    </td>
+                                    <td>
+                                        <strong class="text-dark" th:text="${p.nombre}">Nombre Producto</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge-tipo" th:text="${p.tipoProductoNombre}">Electrónica</span>
+                                    </td>
+                                    <td>
+                                        <strong class="text-primary" th:text="'$' + ${#numbers.formatDecimal(p.precio, 1, 'COMMA', 2, 'POINT')}">$0.00</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        <a th:href="@{/productos/proveedores/{id}(id=${p.idProducto})}" class="badge-prov-count text-decoration-none" title="Configurar proveedores">
+                                            <i class="bi bi-truck me-1"></i><span th:text="${p.cantidadProveedores}">0</span>
+                                        </a>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="d-flex justify-content-end gap-1">
+                                            <a th:href="@{/productos/editar/{id}(id=${p.idProducto})}" class="btn btn-sm btn-outline-primary" title="Editar Producto">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-outline-danger" 
+                                                    th:data-url="@{/productos/eliminar/{id}(id=${p.idProducto})}"
+                                                    th:data-nombre="${p.nombre}"
+                                                    th:data-clave="${p.clave}"
+                                                    onclick="mostrarModalEliminar(this.dataset.url, this.dataset.nombre, this.dataset.clave)"
+                                                    title="Eliminar Producto">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modalEliminarConfirm" class="modal-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="modalEliminarTitulo">
+        <div class="modal-confirm-card text-center">
+            <div class="modal-confirm-icon mx-auto">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h5 class="fw-bold text-dark mb-2" id="modalEliminarTitulo">¿Está seguro de eliminar este producto?</h5>
+            <p class="text-secondary mb-3" style="font-size: 0.95rem; line-height: 1.5;">
+                Se eliminarán también sus asociaciones con proveedores sobre este producto.
+            </p>
+            <div class="p-2 mb-4 rounded bg-light border text-start d-flex align-items-center">
+                <span class="badge bg-secondary me-2 font-monospace" id="modalEliminarClave">SKU</span>
+                <span class="fw-semibold text-dark text-truncate" id="modalEliminarNombre">Nombre del producto</span>
+            </div>
+            <div class="d-flex justify-content-center gap-3">
+                <button type="button" class="btn btn-light border px-4 shadow-sm fw-semibold" onclick="cerrarModalEliminar()">
+                    Cancelar
+                </button>
+                <a href="#" id="btnConfirmarEliminarAccion" class="btn btn-danger px-4 shadow-sm font-weight-bold text-white">
+                    Aceptar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer-custom text-center">
+        <div class="container">
+            <p class="mb-0"><strong>AlMaximoIT - Luis Bonifaz</strong> &copy; 2026 | Sistema de Gestión Web Catálogo de Productos</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>
